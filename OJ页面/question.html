@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+	<!--ace的包-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://cdn.bootcss.com/ace/1.2.4/theme-monokai.js"></script>
+
+	<style type="text/css">
+	.fade-enter-active {
+		transition: all 0.5s ease-out;
+	}
+	.fade-leave-active {
+		transition: all 0s ease-out;
+	}
+	.fade-enter, .fade-leave-to{
+		opacity: 0;
+	}
+	</style>
+
+
+	<script type="text/javascript">
+		window.onload=function(){
+			new Vue({
+				el:"#box",
+				data:{
+					language:'java',
+					language_new:'',
+					isShow:false,
+					ques_detail:'',
+					questions:[
+						{id:'1',name:'超级玛丽游戏',update:'01/04/2012',CTR:'10%',bck:'本题是试机题目，可以帮助了解次系统的使用。',des:'超级玛丽是一个非常经典的游戏。请你用字符画的形式输出超级玛丽中的一个场景。',iFormat:'无',oFormat:'如描述'},
+						{id:'2',name:'A+B Problem',update:'01/05/2012',CTR:'20%',bck:'无',des:'输入两个整数a,b，输出它们的和(|a|,|b|<=10^9)。注意：1.pascal使用integer会爆掉哦！2.有负数哦！3.c/c++的main函数必须是int类型，而且最后要return 0。这不仅对洛谷其他题目有效，而且也是noip/noi比赛的要求！',iFormat:'两个整数以空格分开',oFormat:'一个数'},
+						{id:'3',name:'过河卒',update:'02/04/2012',CTR:'60%',bck:'无',des:'棋盘上AA点有一个过河卒，需要走到目标BB点。卒行走的规则:可以向下、或者向右。同时在棋盘上C点有一个对方的马，该马所在的点和所有跳跃一步可达的点称为对方马的控制点。因此称之为“马拦过河卒”。棋盘用坐标表示，AA点(0, 0)(0,0)、BB点(n, m)(n,m)(nn, mm为不超过2020的整数)，同样马的位置坐标是需要给出的。现在要求你计算出卒从AA点能够到达BB点的路径的条数，假设马的位置是固定不动的，并不是卒走一步马走一步。',iFormat:'一行四个数据，分别表示BB点坐标和马的坐标。',oFormat:'一个数据，表示所有的路径条数。'},
+						{id:'4',name:'铺地毯',update:'03/04/2012',CTR:'80%',bck:'无',des:'为了准备一个独特的颁奖典礼，组织者在会场的一片矩形区域（可看做是平面直角坐标系的第一象限）铺上一些矩形地毯。一共有n张地毯，编号从1到n。现在将这些地毯按照编号从小到大的顺序平行于坐标轴先后铺设，后铺的地毯覆盖在前面已经铺好的地毯之上。地毯铺设完成后，组织者想知道覆盖地面某个点的最上面的那张地毯的编号。注意：在矩形地毯边界和四个顶点上的点也算被地毯覆盖。',iFormat:'输入共n+2行。第一行，一个整数n，表示总共有n张地毯；接下来的nn行中，第i+1行表示编号i的地毯的信息，包含四个正整数a,b,g,k每两个整数之间用一个空格隔开，分别表示铺设地毯的左下角的坐标(a,b)以及地毯在x轴和y轴方向的长度；第n+2行包含两个正整数x和y，表示所求的地面的点的坐标(x,y)',oFormat:'输出共1行，一个整数，表示所求的地毯的编号；若此处没有被地毯覆盖则输出-1'},
+						{id:'5',name:'方格取数',update:'04/04/2012',CTR:'90%',bck:'无',des:'设有N×N的方格图(N≤9)，我们将其中的某些方格中填入正整数，而其他的方格中则放入数字0。如下图所示（见样例）某人从图的左上角的A点出发，可以向下行走，也可以向右走，直到到达右下角的B点。在走过的路上，他可以取走方格中的数（取走后的方格中将变为数字0）。此人从A点到B点共走两次，试找出2条这样的路径，使得取得的数之和为最大。',iFormat:'输入的第一行为一个整数N（表示N×N的方格图），接下来的每行有三个整数，前两个表示位置，第三个数为该位置上所放的数。一行单独的0表示输入结束。',oFormat:'只需输出一个整数，表示2条路径上取得的最大的和。'}
+					]
+				},
+				methods:{
+					chooseLanguage:function(language){
+						this.language=language;
+						editor.session.setMode("ace/mode/" + language);
+					},
+					reset_ace:function(){
+						editor.setValue("");
+					}
+				}
+			});
+
+
+			//初始化对象
+			 editor= ace.edit("code");
+
+			//设置风格和语言
+			theme = "light"
+			language = "java"
+			editor.setTheme("ace/theme/" + theme);
+			editor.session.setMode("ace/mode/" + language);
+
+			//字体大小
+			editor.setFontSize(18);
+
+			//设置只读（true时只读，用于展示代码）
+			editor.setReadOnly(false); 
+
+			//自动换行,设置为off关闭
+			editor.setOption("wrap", "free")
+
+			//启用提示菜单
+			ace.require("ace/ext/language_tools");
+			editor.setOptions({
+				enableBasicAutocompletion: true,
+				enableSnippets: true,
+				enableLiveAutocompletion: true
+			});
+		}
+
+	</script>
+
+	<div class="container">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#">Online Judge</a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li class="active">
+								<a href="#">题目</a>
+							</li>
+							<li>
+								<a href="#">排名</a>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">部落阁</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="#">发布</a>
+									</li>
+									<li>
+										<a href="#">我的博客</a>
+									</li>
+									<li>
+										<a href="#">待用1</a>
+									</li>
+									<li class="divider"> </li>
+									<li>
+										<a href="#">待用2</a>
+									</li>
+									<li class="divider"> </li>
+									<li>
+										<a href="#">待用3</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown" style="right: 30px">个人中心</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a href="#">登录</a>
+									</li>
+									<li>
+										<a href="#">注册</a>
+									</li>
+									<li>
+										<a href="#">账号设置</a>
+									</li>
+									<li>
+										<a href="#">消息</a>
+									</li>
+									<li class="divider"> </li>
+									<li>
+										<a href="#">注销</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+		</div>
+		<div class="row clearfix"></div>
+	</div>
+
+</head>
+
+<body>
+	<div style="padding-top: 70px;" id="box">
+		<div class="py-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-4">
+
+						<div class="col-md-12 column" v-show="ques_detail!=''">
+							<dl>
+								<dt><h2>{{ques_detail.name}}</h2></dt>
+								<hr>
+								<dt> 题目背景 </dt>
+								<dd> {{ques_detail.bck}}</dd>
+								<hr>
+								<dt> 题目描述 </dt>
+								<dd> {{ques_detail.des}} </dd>
+								<hr>
+								<dt> 输入格式：</dt>
+								<dd> {{ques_detail.iFormat}}</dd>
+								<dt> 输出格式：</dt>
+								<dd> {{ques_detail.oFormat}} </dd>
+							</dl>
+							<button type="button" class="btn btn-default btn-block btn-info" @click="isShow=!isShow;" v-show="!isShow">开始答题</button>
+							<button type="button" class="btn btn-default btn-block btn-info" @click="isShow=!isShow;reset_ace();" v-show="isShow">放弃作答并返回</button>
+						</div>
+						<div class="alert alert-dismissable alert-info" v-show="ques_detail==''">
+							<h4>
+								注意!
+							</h4> 选择右边题目后显示详细信息
+						</div>
+					</div>
+
+					<div class="col-md-8">
+
+						<div class="col-md-12 column">
+							
+							<transition name="fade" mode="out-in">
+								<div v-show="!isShow">
+									<table class="table  table-hover">
+										<thead>
+											<tr>
+												<th> ID </th>
+												<th> 题目名 </th>
+												<th> 上传时间 </th>
+												<th> 通过率 </th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr v-for="ques in questions" @click="ques_detail=ques">
+												<td> {{ques.id}}</td>
+												<td> {{ques.name}} </td>
+												<td> {{ques.update}} </td>
+												<td> {{ques.CTR}} </td>
+											</tr>
+										</tbody>
+									</table>
+									<div class="row clearfix">
+										<div class="col-md-3 column"> </div>
+										<div class="col-md-6 column">
+											<ul class="pagination">
+												<li>
+													<a href="#"><<</a>
+												</li>
+												<li>
+													<a href="#">1</a>
+												</li>
+												<li>
+													<a href="#">2</a>
+												</li>
+												<li>
+													<a href="#">3</a>
+												</li>
+												<li>
+													<a href="#">4</a>
+												</li>
+												<li>
+													<a href="#">5</a>
+												</li>
+												<li>
+													<a href="#">>></a>
+												</li>
+											</ul>
+										</div>
+										<div class="col-md-3 column"> </div>
+									</div>
+								</div>
+							</transition>
+
+							<transition name="fade" mode="out-in">
+								<div v-show="isShow">
+									<a id="modal-388515" href="#modal-container-388515" role="button" class="btn-sm" data-toggle="modal">切换编辑语言</a>
+									<div class="modal fade" id="modal-container-388515" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+													<h4 class="modal-title" id="myModalLabel">
+														语言设置-目前语言为{{language}}
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="btn-toolbar" role="toolbar">
+														<div class="btn-group">
+															<button type="button" class="btn btn-default" @click="chooseLanguage('java')" data-dismiss="modal">Java</button>
+															<button type="button" class="btn btn-default" @click="chooseLanguage('python')" data-dismiss="modal">Python</button>
+															<button type="button" class="btn btn-default" @click="chooseLanguage('c_cpp')" data-dismiss="modal">C/C++</button>
+															<button type="button" class="btn btn-default" @click="chooseLanguage('html')" data-dismiss="modal">HTML</button>
+															<button type="button" class="btn btn-default" @click="chooseLanguage('javascript')" data-dismiss="modal">JavaScript</button>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!--代码输入框（注意请务必设置高度，否则无法显示）-->
+									<pre id="code" class="ace_editor" style="min-height:500px"><textarea class="ace_text-input" v-model="str"></textarea></pre>
+								</div>
+							</transition>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
